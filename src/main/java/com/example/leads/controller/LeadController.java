@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+//allows cors requests
 @CrossOrigin(origins = "https://leads-management-system-tau.vercel.app")
 @RestController
 @RequestMapping("/leads")
@@ -30,13 +31,22 @@ public class LeadController {
 
     // POST /leads - Create a new lead
     @PostMapping
-    public ResponseEntity<Lead> createLead(@RequestBody Lead lead) {
-        // Basic validation can be extended (e.g., checking duplicate emails, etc.)
+    public ResponseEntity<?> createLead(@RequestBody Lead lead) {
+        // Check for duplicate email
+        if (leadRepository.findByEmail(lead.getEmail()).isPresent()) {
+            // Email already exists
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .body("Email already exists");
+        }
+
+        // Save the lead if no duplicate email is found
         Lead savedLead = leadRepository.save(lead);
         return new ResponseEntity<>(savedLead, HttpStatus.CREATED);
     }
 
-    // DELETE /leads/{id} - Delete a lead by ID (optional)
+
+    // DELETE /leads/{id} - Delete a lead by ID
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteLead(@PathVariable UUID id) {
         if (!leadRepository.existsById(id)) {
@@ -46,5 +56,5 @@ public class LeadController {
         return ResponseEntity.ok("Lead deleted");
     }
 
-    // Additional error handling can be added with @ExceptionHandler methods
+
 }
