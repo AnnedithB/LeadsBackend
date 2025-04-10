@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+@CrossOrigin(origins = "https://leads-management-system-tau.vercel.app")
 @RestController
 @RequestMapping("/leads")
 public class LeadController {
