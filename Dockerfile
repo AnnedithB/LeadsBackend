@@ -19,4 +19,4 @@ COPY --from=build /app/target/leads-backend-0.0.1-SNAPSHOT.jar .
 EXPOSE 8080
 
 # Run the JAR
-ENTRYPOINT ["java", "-jar", "/app/leads-backend-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "/app/target/leads-backend-0.0.1-SNAPSHOT.jar"]
