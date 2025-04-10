@@ -1,8 +1,5 @@
-# Use OpenJDK base image
-FROM maven:3.8.4-openjdk-17 AS build
-
-
-# Set working directory
+# ===== STAGE 1: Build JAR =====
+FROM maven:3.9.4-eclipse-temurin-17 AS build
 WORKDIR /app
 
 COPY pom.xml .
@@ -11,12 +8,14 @@ RUN mvn dependency:go-offline
 COPY src ./src
 RUN mvn clean package -DskipTests
 
+# ===== STAGE 2: Run JAR =====
 FROM eclipse-temurin:17-jdk
-# Copy JAR file
-COPY --from=build /app/target/leads-backend-0.0.1-SNAPSHOT.jar .
 
-# Expose port (Render uses 10000+)
+WORKDIR /app
+
+# Copy built JAR from build stage
+COPY --from=build /app/target/leads-backend-0.0.1-SNAPSHOT.jar app.jar
+
 EXPOSE 8080
 
-# Run the JAR
-ENTRYPOINT ["java", "-jar", "/app/target/leads-backend-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
